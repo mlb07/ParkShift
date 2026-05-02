@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parkshift.local/schemas/identity-1.0.json",
+  "title": "ParkShift Home-Park Identity",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "player_type",
+    "player_id",
+    "player_name",
+    "season",
+    "source_team",
+    "source_teams",
+    "source_park_id",
+    "source_park_ids",
+    "source_park_name",
+    "source_park_names",
+    "cat",
+    "game_types",
+    "home_hr_candidate_batted_balls",
+    "season_hr_total",
+    "non_source_home_hr",
+    "actual_home_hr",
+    "source_park_hr",
+    "source_park_matches_actual",
+    "park_average_hr",
+    "help_hurt",
+    "help_hurt_label",
+    "skipped_missing_game",
+    "skipped_game_type",
+    "skipped_neutral_or_alt_site",
+    "skipped_missing_game_pks",
+    "skipped_game_type_pks",
+    "skipped_neutral_or_alt_site_pks",
+    "source_park_result",
+    "source_park_results",
+    "parks"
+  ],
+  "properties": {
+    "contract_version": { "const": "1.0" },
+    "player_type": { "enum": ["Batter", "Pitcher"] },
+    "player_id": { "type": ["string", "null"] },
+    "player_name": { "type": ["string", "null"] },
+    "season": { "type": ["integer", "null"] },
+    "source_team": { "type": "string" },
+    "source_teams": { "type": "array", "items": { "type": "string" } },
+    "source_park_id": { "type": "string" },
+    "source_park_ids": { "type": "array", "items": { "type": "string" } },
+    "source_park_name": { "type": "string" },
+    "source_park_names": { "type": "array", "items": { "type": "string" } },
+    "cat": { "type": "string" },
+    "game_types": { "type": "array", "items": { "type": "string" } },
+    "home_hr_candidate_batted_balls": { "type": "integer" },
+    "season_hr_total": { "type": ["integer", "null"] },
+    "non_source_home_hr": { "type": ["integer", "null"] },
+    "actual_home_hr": { "type": "integer" },
+    "source_park_hr": { "type": "integer" },
+    "source_park_matches_actual": { "type": "boolean" },
+    "park_average_hr": { "type": "number" },
+    "help_hurt": { "type": "number" },
+    "help_hurt_label": { "type": "string" },
+    "skipped_missing_game": { "type": "integer" },
+    "skipped_game_type": { "type": "integer" },
+    "skipped_neutral_or_alt_site": { "type": "integer" },
+    "skipped_missing_game_pks": { "type": "array", "items": { "type": "string" } },
+    "skipped_game_type_pks": { "type": "array", "items": { "type": "string" } },
+    "skipped_neutral_or_alt_site_pks": { "type": "array", "items": { "type": "string" } },
+    "source_park_result": {
+      "anyOf": [
+        { "$ref": "#/$defs/park_result" },
+        { "type": "null" }
+      ]
+    },
+    "source_park_results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/park_result" }
+    },
+    "parks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/park_result" }
+    }
+  },
+  "$defs": {
+    "park_result": {
+      "type": "object",
+      "required": [
+        "rank",
+        "park_id",
+        "park_name",
+        "savant_code",
+        "translated_hr",
+        "projected_total_hr",
+        "parkshift_score",
+        "home_runs"
+      ],
+      "properties": {
+        "rank": { "type": "integer" },
+        "park_id": { "type": "string" },
+        "park_name": { "type": "string" },
+        "savant_code": { "type": "string" },
+        "translated_hr": { "type": "integer" },
+        "projected_total_hr": { "type": ["integer", "null"] },
+        "parkshift_score": { "type": "number" },
+        "home_runs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/home_run_marker" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "home_run_marker": {
+      "type": "object",
+      "required": [
+        "play_id",
+        "game_pk",
+        "game_date",
+        "distance_ft",
+        "launch_angle",
+        "exit_velocity",
+        "spray_angle_deg"
+      ],
+      "properties": {
+        "play_id": { "type": ["string", "null"] },
+        "game_pk": { "type": "string" },
+        "game_date": { "type": ["string", "null"] },
+        "distance_ft": { "type": ["integer", "null"] },
+        "launch_angle": { "type": ["integer", "null"] },
+        "exit_velocity": { "type": ["number", "null"] },
+        "spray_angle_deg": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

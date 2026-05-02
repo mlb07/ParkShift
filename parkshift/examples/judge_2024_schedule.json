@@ -1,0 +1,26 @@
+{
+  "dates": [
+    {
+      "games": [
+        {
+          "gamePk": 1,
+          "gameType": "R",
+          "teams": {
+            "home": { "team": { "id": 147 } },
+            "away": { "team": { "id": 111 } }
+          },
+          "venue": { "id": 3313, "name": "Yankee Stadium" }
+        },
+        {
+          "gamePk": 2,
+          "gameType": "R",
+          "teams": {
+            "home": { "team": { "id": 147 } },
+            "away": { "team": { "id": 111 } }
+          },
+          "venue": { "id": 3313, "name": "Yankee Stadium" }
+        }
+      ]
+    }
+  ]
+}

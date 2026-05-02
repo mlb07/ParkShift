@@ -1,0 +1,35 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+.venv/
+venv/
+env/
+.env
+.env.*
+
+*.egg-info/
+build/
+dist/
+
+.DS_Store
+
+# Local data, exports, trained models, and downloaded artifacts.
+*.csv
+*.parquet
+*.pkl
+*.joblib
+*.sqlite
+*.db
+models/
+savant_downloads*/
+savant_validation*/
+*_report.html
+*_identity.json
+
+# Keep the static app source.
+!web/index.html

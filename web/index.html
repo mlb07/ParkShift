@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ParkShift</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <h1>ParkShift</h1>
+        <div id="runStatus" class="visually-hidden" role="status">Ready</div>
+      </header>
+
+      <main class="workspace">
+        <section class="control-panel" aria-label="Controls">
+          <div class="field-grid">
+            <label>
+              Player search
+              <input id="playerSearchInput" type="search" autocomplete="off">
+            </label>
+            <label>
+              Season
+              <input id="seasonInput" type="number" min="2016" max="2026" value="2024">
+            </label>
+            <fieldset class="mode-toggle" aria-label="Player type">
+              <legend>Player type</legend>
+              <div class="segmented-row">
+                <button id="batterTypeButton" class="segmented is-active" type="button" data-player-type="Batter">Batter</button>
+                <button id="pitcherTypeButton" class="segmented" type="button" data-player-type="Pitcher">Pitcher</button>
+              </div>
+            </fieldset>
+            <fieldset class="mode-toggle" aria-label="Translation mode">
+              <legend>Translation mode</legend>
+              <div class="segmented-row">
+                <button id="adjustedModeButton" class="segmented is-active" type="button" data-cat-mode="adj_xhr">Stadium Adjusted HR</button>
+                <button id="standardModeButton" class="segmented" type="button" data-cat-mode="xhr">Observed Flight HR</button>
+              </div>
+            </fieldset>
+          </div>
+          <input id="playerIdInput" type="hidden">
+          <input id="sourceTeamsInput" type="hidden">
+          <input id="apiBaseInput" type="hidden" value="http://127.0.0.1:8000">
+
+          <div class="action-row">
+            <div class="button-row">
+              <button id="searchButton" class="secondary-button" type="button">Search</button>
+              <button id="runButton" class="primary-button" type="button">Run</button>
+              <button id="addBatchButton" class="secondary-button" type="button">Queue</button>
+              <button id="runBatchButton" class="secondary-button" type="button">Run Queue</button>
+            </div>
+          </div>
+          <div id="playerResults" class="player-results" aria-label="Player search results"></div>
+          <p id="errorMessage" class="error-message" hidden></p>
+
+          <div class="workflow-grid">
+            <section class="workflow-panel" aria-label="Batch queue">
+              <div class="mini-heading">
+                <p class="eyebrow">Batch Queue</p>
+                <button id="clearBatchButton" class="text-button" type="button">Clear</button>
+              </div>
+              <div id="batchQueue" class="mini-list"></div>
+            </section>
+            <section class="workflow-panel" aria-label="Recent runs">
+              <div class="mini-heading">
+                <p class="eyebrow">Recent Runs</p>
+                <div class="mini-actions">
+                  <button id="toggleHistoryPanelButton" class="text-button" type="button">Show</button>
+                  <button id="exportHistoryButton" class="text-button" type="button">Export</button>
+                  <button id="clearHistoryButton" class="text-button" type="button">Clear</button>
+                </div>
+              </div>
+              <div id="runHistory" class="mini-list"></div>
+            </section>
+            <section class="workflow-panel" aria-label="Season leaders">
+              <div class="mini-heading">
+                <p id="seasonLeadersHeading" class="eyebrow">Season Leaders</p>
+                <div class="mini-actions">
+                  <button id="toggleLeadersPanelButton" class="text-button" type="button">Hide</button>
+                  <select id="leaderboardOrderSelect" class="mini-select" aria-label="Leaderboard order">
+                    <option value="high" selected>Most HR</option>
+                    <option value="low">Fewest HR</option>
+                  </select>
+                  <select id="leaderLimitSelect" class="mini-select" aria-label="Leader limit">
+                    <option value="5">Top 5</option>
+                    <option value="10" selected>Top 10</option>
+                    <option value="25">Top 25</option>
+                  </select>
+                  <button id="loadLeadersButton" class="text-button" type="button">Load</button>
+                  <button id="queueLeadersButton" class="text-button" type="button">Queue All</button>
+                </div>
+              </div>
+              <div id="seasonLeaders" class="mini-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="summary-band" aria-label="Summary">
+          <div class="player-block">
+            <p id="playerMeta" class="eyebrow">Season</p>
+            <h2 id="playerName">Select a player</h2>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card">
+              <span id="seasonHrLabel">Season HR</span>
+              <strong id="actualHr">0</strong>
+            </article>
+            <article class="metric-card">
+              <span id="sourceHrLabel">Home HR</span>
+              <strong id="sourceHr">0</strong>
+            </article>
+            <article class="metric-card">
+              <span id="avgLabel">Home Split Avg</span>
+              <strong id="parkAvg">0.0</strong>
+            </article>
+            <article class="metric-card">
+              <span id="changeLabel">Park Change</span>
+              <strong id="helpHurt">+0.0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="rankings-section">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Park Translation</p>
+                <h2>All MLB Parks</h2>
+              </div>
+              <div class="table-tools">
+                <label class="compact-label">
+                  Park filter
+                  <input id="parkFilterInput" type="search" autocomplete="off">
+                </label>
+                <label class="compact-label">
+                  Sort
+                  <select id="sortSelect">
+                    <option id="rankSortOption" value="rank">Best fit</option>
+                    <option value="translated_hr_desc">HR high</option>
+                    <option value="parkshift_score_desc">Score high</option>
+                    <option id="worstFitSortOption" value="worst_fit">Worst fit</option>
+                    <option value="park_name">Park A-Z</option>
+                  </select>
+                </label>
+                <button id="exportCsvButton" class="icon-button" type="button" title="Export CSV" aria-label="Export CSV">CSV</button>
+                <button id="shareButton" class="icon-button" type="button" title="Copy share link" aria-label="Copy share link">Link</button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Park</th>
+                    <th id="totalHrHeader" scope="col">Total HR</th>
+                    <th id="homeHrHeader" scope="col">Home HR</th>
+                    <th scope="col">Score</th>
+                    <th scope="col">Fit</th>
+                  </tr>
+                </thead>
+                <tbody id="parksTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="detail-panel" aria-label="Details">
+            <div class="mini-heading detail-heading">
+              <p class="eyebrow">Ball Map</p>
+              <button id="toggleTrailsButton" class="text-button" type="button">Hide Trails</button>
+            </div>
+            <div id="parkVisual" class="park-visual" aria-label="Selected park home run map"></div>
+            <div id="ballTooltip" class="ball-tooltip" hidden></div>
+
+            <div class="side-section">
+              <p class="eyebrow">Selected Park</p>
+              <h3 id="selectedParkTitle">No run</h3>
+              <p id="selectedParkMeta" class="side-value">0 total HR, 0 home HR</p>
+            </div>
+
+            <div class="side-section">
+              <p id="parkEffectLabel" class="eyebrow">Park Effect</p>
+              <h3 id="selectedParkChange">+0.0</h3>
+            </div>
+
+            <dl class="diagnostics">
+              <div>
+                <dt>Candidates</dt>
+                <dd id="candidateCount">0</dd>
+              </div>
+              <div>
+                <dt>Mode</dt>
+                <dd id="categoryValue">Stadium Adjusted HR</dd>
+              </div>
+              <div>
+                <dt>Game types</dt>
+                <dd id="gameTypesValue">R</dd>
+              </div>
+            </dl>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

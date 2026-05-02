@@ -1,0 +1,26 @@
+[
+  {
+    "game_pk": "1",
+    "result": "home_run",
+    "batter_id": "592450",
+    "batter_name": "Judge, Aaron",
+    "year": "2024",
+    "team_abbrev": "NYY",
+    "nyy": "1",
+    "hou": "1",
+    "lad": "1",
+    "sf": "0"
+  },
+  {
+    "game_pk": "2",
+    "result": "field_out",
+    "batter_id": "592450",
+    "batter_name": "Judge, Aaron",
+    "year": "2024",
+    "team_abbrev": "NYY",
+    "nyy": "0",
+    "hou": "1",
+    "lad": "0",
+    "sf": "0"
+  }
+]
